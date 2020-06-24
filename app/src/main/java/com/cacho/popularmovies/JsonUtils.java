@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JsonUtils {
+public final class JsonUtils {
     public static List<Movie> parseMoviesResult(String json) throws JSONException {
         List<Movie> moviesList = new ArrayList<>();
         JSONObject jo = new JSONObject(json);

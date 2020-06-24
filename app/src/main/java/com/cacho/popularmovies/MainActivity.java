@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -52,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if(checkForInternet()) {
             String url = isPopular ? REQUEST_POPULAR_BASE : REQUEST_TOP_RATED_BASE;
             new MoviesGetter(this).execute(url);
+        } else {
+            Toast.makeText(getApplicationContext(), "Sorry, there was a problem loading the movies", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import static com.cacho.popularmovies.MoviesGetter.POSTER_BASE_PATH;
@@ -29,7 +30,8 @@ public class MovieDetails extends AppCompatActivity {
             ((TextView) findViewById(R.id.title_tv)).setText(extras.getString("title"));
             ((TextView) findViewById(R.id.plot_tv)).setText(extras.getString("overview"));
             ((TextView) findViewById(R.id.date_tv)).setText(extras.getString("release_date"));
-            ((TextView) findViewById(R.id.vote_tv)).setText(extras.getString("vote"));
+            ((RatingBar) findViewById(R.id.vote_tv)).setNumStars(10);
+            ((RatingBar) findViewById(R.id.vote_tv)).setRating(Float.valueOf(extras.getString("vote")));
 
             ImageView poster = findViewById(R.id.image_iv);
             String poster_path = String.format("%s%s", POSTER_BASE_PATH, extras.getString("poster_path"));
