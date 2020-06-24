@@ -13,7 +13,7 @@ import java.net.URL;
 
 public class MoviesGetter extends AsyncTask<String , Void ,String> {
     public static final String api_key = "";
-    public final static String REQUEST_POPULAR_BASE = String.format("http://api.themoviedb.org/3/movie/popular?api_key=%s&sort_by=popularity.asc", api_key);
+    public final static String REQUEST_POPULAR_BASE = String.format("http://api.themoviedb.org/3/movie/popular?api_key=%s", api_key);
     public final static String REQUEST_TOP_RATED_BASE = String.format("http://api.themoviedb.org/3/movie/top_rated?api_key=%s", api_key);
     public final static String IMAGE_QUALITY = "w185";
     public final static String POSTER_BASE_PATH = "http://image.tmdb.org/t/p/w185";
