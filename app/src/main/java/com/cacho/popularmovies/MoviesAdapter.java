@@ -8,6 +8,8 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
+import model.Movie;
+
 import static com.cacho.popularmovies.MoviesGetter.POSTER_BASE_PATH;
 
 public class MoviesAdapter extends BaseAdapter {

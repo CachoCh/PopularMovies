@@ -1,6 +1,7 @@
 package com.cacho.popularmovies;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,17 +17,24 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 
+import model.Movie;
+import model.MovieDAO;
+import model.MovieRoomDatabase;
+
+import static com.cacho.popularmovies.MainActivity.Sorting.FAVOURITES;
+import static com.cacho.popularmovies.MainActivity.Sorting.POPULAR;
+import static com.cacho.popularmovies.MainActivity.Sorting.TOP_RATED;
 import static com.cacho.popularmovies.MoviesGetter.REQUEST_POPULAR_BASE;
 import static com.cacho.popularmovies.MoviesGetter.REQUEST_TOP_RATED_BASE;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, OnTaskDoneListener {
     private Spinner spinnerSorting;
     private GridView gridView;
-    private Boolean isPopular = true;
+    private Sorting sortingType = POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,25 +44,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinnerSorting = (Spinner) findViewById(R.id.spinnerSorting);
         spinnerSorting.setOnItemSelectedListener(this);
         gridView = (GridView) findViewById(R.id.gridview);
-        getMovies();
+        MovieRoomDatabase db = MovieRoomDatabase.getDatabase(this);
+        getMovies(db);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-        isPopular =  position == 0 ? true : false;
-        getMovies();
+        sortingType = position == 0 ? POPULAR : position == 1 ? TOP_RATED : FAVOURITES;
+        MovieRoomDatabase db = MovieRoomDatabase.getDatabase(this);
+        getMovies(db);
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
-    private void getMovies(){
-        if(checkForInternet()) {
-            String url = isPopular ? REQUEST_POPULAR_BASE : REQUEST_TOP_RATED_BASE;
-            new MoviesGetter(this).execute(url);
+    private void getMovies(MovieRoomDatabase db) {
+        MovieDAO mMoviesDao = db.movieDao();
+
+        if (sortingType != FAVOURITES) {
+            if (checkForInternet()) {
+                //String url = isPopular ? REQUEST_POPULAR_BASE : REQUEST_TOP_RATED_BASE;
+                String url = sortingType == POPULAR ? REQUEST_POPULAR_BASE : REQUEST_TOP_RATED_BASE;
+                new MoviesGetter(this).execute(url);
+            } else {
+                Toast.makeText(getApplicationContext(), "Sorry, there was a problem loading the movies", Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(getApplicationContext(), "Sorry, there was a problem loading the movies", Toast.LENGTH_LONG).show();
+
+            Future<List<Movie>> result = db.databaseWriteExecutor.submit(new Callable<List<Movie>>() {
+                public List<Movie> call() throws Exception {
+                    return mMoviesDao.getFavouriteMovies();
+                }
+            });
+
+            try {
+                List<Movie> favMovies = result.get();
+                gridViewSetup(favMovies);
+            } catch (Exception exception) {
+               // Toast.makeText(getApplicationContext(), "Something", Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -66,6 +95,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        gridViewSetup(moviesArray);
+    }
+
+    private void gridViewSetup(List<Movie> moviesArray) {
         MoviesAdapter moviesAdapter = new MoviesAdapter(this, moviesArray);
         gridView.setAdapter(moviesAdapter);
         final List<Movie> finalMoviesArray = moviesArray;
@@ -92,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    private Boolean checkForInternet(){
+    private Boolean checkForInternet() {
         ConnectivityManager mgr = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = mgr.getActiveNetworkInfo();
 
@@ -102,4 +136,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return false;
         }
     }
+
+    enum Sorting {
+        POPULAR,
+        TOP_RATED,
+        FAVOURITES
+    }
+
 }

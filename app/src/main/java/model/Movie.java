@@ -1,5 +1,10 @@
-package com.cacho.popularmovies;
+package model;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "movie_table")
+public
 class Movie {
 
     private String poster_path;
@@ -7,6 +12,10 @@ class Movie {
     private String overview;
     private String release_date;
     private String vote;
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
 
     public Movie(String title, String poster_path, String overview, String release_date, String vote) {
         this.poster_path = poster_path;
@@ -36,4 +45,11 @@ class Movie {
         return vote;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

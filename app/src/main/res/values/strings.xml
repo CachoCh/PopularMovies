@@ -5,6 +5,7 @@
     <string-array name="sorting_arrays">
         <item>Popular</item>
         <item>Top Rated</item>
+        <item>Favourites</item>
     </string-array>
     <string name="title_activity_movie_details">MovieDetails</string>
     <!-- Strings used for fragments for navigation -->
@@ -15,4 +16,7 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+
+    <string name="mark_as_favorite">Mark as Favourite</string>
 </resources>
