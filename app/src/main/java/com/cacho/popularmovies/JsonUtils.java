@@ -22,10 +22,20 @@ public final class JsonUtils {
                     movieJO.getString("poster_path"),
                     movieJO.getString("overview"),
                     movieJO.getString("release_date"),
-                    movieJO.getString("vote_average"));
+                    movieJO.getString("vote_average"),
+                    "",
+                    movieJO.getInt("id"));
             moviesList.add(movie);
         }
 
         return moviesList;
     }
+
+    public static String parseMovieRuntime(String json) throws JSONException {
+        JSONObject jo = new JSONObject(json);
+        String runtime = jo.getString("runtime");
+
+        return runtime;
+    }
+
 }

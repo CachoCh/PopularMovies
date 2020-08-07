@@ -12,10 +12,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MoviesGetter extends AsyncTask<String , Void ,String> {
-    public static final String api_key = "";
+    public static final String api_key = "513237b7c5664a3715519ed139954efb";
     public final static String REQUEST_POPULAR_BASE = String.format("https://api.themoviedb.org/3/movie/popular?api_key=%s", api_key);
     public final static String REQUEST_TOP_RATED_BASE = String.format("https://api.themoviedb.org/3/movie/top_rated?api_key=%s", api_key);
-    public final static String IMAGE_QUALITY = "w185";
+    public final static String REQUEST_MOVIE = String.format("https://api.themoviedb.org/3/movie/%%s?api_key=%s", api_key);
+    //public final static String IMAGE_QUALITY = "w185";
     public final static String POSTER_BASE_PATH = "https://image.tmdb.org/t/p/w185";
 
     private OnTaskDoneListener onTaskDoneListener;
@@ -36,8 +37,7 @@ public class MoviesGetter extends AsyncTask<String , Void ,String> {
 
             if(responseCode == HttpURLConnection.HTTP_OK){
                 server_response = readStream(urlConnection.getInputStream());
-                Log.v("CatalogClient", server_response);
-            }
+                Log.v("CatalogClient", server_response); }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();

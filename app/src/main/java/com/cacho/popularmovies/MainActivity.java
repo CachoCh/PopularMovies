@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 i.putExtra("poster_path", selectedMovie.getPoster_path());
                 i.putExtra("release_date", selectedMovie.getRelease_date());
                 i.putExtra("vote", selectedMovie.getVote());
+                i.putExtra("duration", selectedMovie.getDuration());
+                i.putExtra("id", selectedMovie.getId());
                 startActivity(i);
 
             }

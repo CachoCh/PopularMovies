@@ -12,17 +12,20 @@ class Movie {
     private String overview;
     private String release_date;
     private String vote;
+    private String duration;
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey()
     private int id;
 
 
-    public Movie(String title, String poster_path, String overview, String release_date, String vote) {
+    public Movie(String title, String poster_path, String overview, String release_date, String vote, String duration, int id) {
         this.poster_path = poster_path;
         this.title = title;
         this.overview = overview;
         this.release_date = release_date;
         this.vote = vote;
+        this.duration = duration;
+        this.id = id;
     }
 
     public String getPoster_path() {
@@ -51,5 +54,12 @@ class Movie {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDuration() {
+        return duration;
+    }
+    public void setDuration(String duration) {
+        this.duration = duration;
     }
 }

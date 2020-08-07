@@ -1,50 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scroll"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clickable="false">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context="com.udacity.sandwichclub.DetailActivity">
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/title_tv"
+            android:layout_width="0dp"
+            android:layout_height="150dp"
+            android:background="#00BCD4"
+            android:ems="10"
+            android:focusable="false"
+            android:textColor="#FFFFFF"
+            android:textSize="40dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/image_iv"
-            android:layout_width="match_parent"
+            android:layout_width="150dp"
             android:layout_height="200dp"
-            android:adjustViewBounds="true"
-            android:scaleType="center" />
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="15dp"
+            android:scaleType="fitXY"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
-        <TextView
-            android:id="@+id/title_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
+        <EditText
             android:id="@+id/date_tv"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
+            android:background="@null"
+            android:ems="10"
+            android:focusable="false"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textSize="25dp"
+            app:layout_constraintStart_toEndOf="@+id/image_iv"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv" />
 
-        <RatingBar
+        <EditText
+            android:id="@+id/duration_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:background="@null"
+            android:ems="10"
+            android:focusable="false"
+            android:inputType="textPersonName"
+            android:text="Name"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/date_tv"
+            app:layout_constraintTop_toBottomOf="@+id/date_tv" />
+
+        <EditText
             android:id="@+id/vote_tv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:ems="10"
+            android:background="@null"
+            android:focusable="false"
+            android:inputType="textPersonName"
+            android:text="Name"
+            app:layout_constraintStart_toStartOf="@+id/duration_tv"
+            app:layout_constraintTop_toBottomOf="@+id/duration_tv" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="@string/mark_as_favorite"
+            android:onClick="saveFavourite"
+            app:layout_constraintStart_toStartOf="@+id/vote_tv"
+            app:layout_constraintTop_toBottomOf="@+id/vote_tv" />
 
         <TextView
             android:id="@+id/plot_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/favorite_bt"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/mark_as_favorite"
-            android:onClick="saveFavourite"/>
-
-
-    </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="25dp"
+            android:focusable="false"
+            android:text="TextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/image_iv"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
