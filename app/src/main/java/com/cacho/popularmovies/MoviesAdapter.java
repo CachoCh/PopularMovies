@@ -41,6 +41,7 @@ public class MoviesAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         //http://image.tmdb.org/t/p/w185/2CAL2433ZeIihfX1Hb2139CX0pW.jpg
         ImageView dummyImageView = new ImageView(mContext);
+        dummyImageView.setAdjustViewBounds(true);
         String poster_path = String.format("%s%s", POSTER_BASE_PATH, movies.get(i).getPoster_path());
         Picasso.with(mContext).load(poster_path).into(dummyImageView);
         return dummyImageView;
