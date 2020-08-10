@@ -3,28 +3,40 @@ package com.cacho.popularmovies;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import com.cacho.popularmovies.recyclerview.TrailersAdapter;
 import com.squareup.picasso.Picasso;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONException;
 
+import java.util.List;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import model.Movie;
 import model.MovieDAO;
 import model.MovieRoomDatabase;
 
+import static com.cacho.popularmovies.JsonUtils.parseMovieRuntime;
+import static com.cacho.popularmovies.JsonUtils.parseMovieTrailersKey;
 import static com.cacho.popularmovies.MoviesGetter.POSTER_BASE_PATH;
-import static com.cacho.popularmovies.MoviesGetter.REQUEST_MOVIE;
+import static com.cacho.popularmovies.MoviesGetter.REQUEST_MOVIE_AND_TRAILERS;
 
 public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListener{
 
+    final static String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
+
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
     Movie mCurrentMovie;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,10 +66,18 @@ public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListen
             ((TextView) findViewById(R.id.vote_tv)).setText(String.format("%s/10",extras.getString("vote")));
             ((TextView) findViewById(R.id.vote_tv)).setTypeface(null, Typeface.BOLD);
 
-            new MoviesGetter(this).execute(String.format(REQUEST_MOVIE, mCurrentMovie.getId()));
+            new MoviesGetter(this).execute(String.format(REQUEST_MOVIE_AND_TRAILERS, mCurrentMovie.getId()));
         }
 
+        recyclerView = (RecyclerView) findViewById(R.id.trailers_rv);
 
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        recyclerView.setHasFixedSize(true);
+
+        // use a linear layout manager
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
     }
 
     public void saveFavourite(View v){
@@ -90,8 +110,12 @@ public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListen
     public void onTaskDone(String responseData) {
 
         try {
-            String duration = JsonUtils.parseMovieRuntime(responseData);
+            String duration = parseMovieRuntime(responseData);
             mCurrentMovie.setDuration(duration);
+
+            List<String> trailerKeyString = parseMovieTrailersKey(responseData);
+            mAdapter = new TrailersAdapter(this, trailerKeyString); //
+            recyclerView.setAdapter(mAdapter);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -38,4 +38,15 @@ public final class JsonUtils {
         return runtime;
     }
 
+    public static List<String> parseMovieTrailersKey(String json) throws JSONException {
+        JSONArray ja =  new JSONObject(json).getJSONObject("videos").getJSONArray("results");
+        List<String> trailerKeyString = new ArrayList<>();
+
+        for (int i = 0; i < ja.length(); i++) {
+            JSONObject jo = ja.getJSONObject(i);
+            trailerKeyString.add(jo.getString("key"));
+        }
+        return trailerKeyString;
+    }
+
 }

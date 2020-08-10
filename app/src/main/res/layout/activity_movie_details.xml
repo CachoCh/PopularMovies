@@ -89,8 +89,8 @@
 
         <TextView
             android:id="@+id/plot_tv"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="25dp"
@@ -98,7 +98,28 @@
             android:text="TextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/image_iv"
-            />
+            app:layout_constraintTop_toBottomOf="@+id/image_iv" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Trailers: "
+            android:focusable="false"
+            app:layout_constraintStart_toStartOf="@+id/plot_tv"
+            app:layout_constraintTop_toBottomOf="@+id/plot_tv" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trailers_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="@+id/editTextTextPersonName"
+            app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName" />
+        
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
