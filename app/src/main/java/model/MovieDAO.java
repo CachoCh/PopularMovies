@@ -19,13 +19,16 @@ public interface MovieDAO {
     @Query("DELETE FROM movie_table")
     void deleteAll();
 
+    @Query("DELETE FROM movie_table WHERE id LIKE :movieId")
+    void deleteMovie(String movieId);
+
     @Query("SELECT * from movie_table")
     List<Movie> getFavouriteMovies();
 
     @Query("SELECT COUNT(id) FROM movie_table")
     String getCount();
 
-    @Query("SELECT COUNT(id) FROM movie_table  WHERE title LIKE  :movieTitle ")
-    int searchExistingMovie(String movieTitle);
+    @Query("SELECT id FROM movie_table  WHERE id LIKE :movieId")
+    int searchExistingMovie(String movieId);
 }
 

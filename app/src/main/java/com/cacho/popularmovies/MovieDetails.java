@@ -8,8 +8,11 @@ import com.squareup.picasso.Picasso;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,6 +39,9 @@ public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListen
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager layoutManager;
     Movie mCurrentMovie;
+    private MovieRoomDatabase mDB;
+    private MovieDAO mWordDao;
+    private Button mFavouriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +71,28 @@ public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListen
             ((TextView) findViewById(R.id.duration_tv)).setText(String.format("%s min",mCurrentMovie.getDuration()));
             ((TextView) findViewById(R.id.vote_tv)).setText(String.format("%s/10",extras.getString("vote")));
             ((TextView) findViewById(R.id.vote_tv)).setTypeface(null, Typeface.BOLD);
+            mFavouriteButton = findViewById(R.id.favourite_bt);
 
+            //favourite_bt
+            mDB = MovieRoomDatabase.getDatabase(this);
+            mWordDao = mDB.movieDao();
+            try {
+                mDB.databaseWriteExecutor.execute(() -> {
+                    if (mWordDao.searchExistingMovie(String.valueOf(mCurrentMovie.getId())) == mCurrentMovie.getId()) {
+                        setButton(mFavouriteButton, true);
+                    } else {
+                        setButton(mFavouriteButton, false);
+                    }
+
+                    String count = mWordDao.getCount();
+                    Log.wtf("CACHO", "count ->  " +  count);
+
+                });
+
+
+            } catch(Exception e){
+
+            }
             new MoviesGetter(this).execute(String.format(REQUEST_MOVIE_AND_TRAILERS, mCurrentMovie.getId()));
         }
 
@@ -80,26 +107,29 @@ public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListen
         recyclerView.setLayoutManager(layoutManager);
     }
 
-    public void saveFavourite(View v){
-        //Toast.makeText(getApplicationContext(), "CLICK!", Toast.LENGTH_LONG).show();
+    private void setButton(Button button, boolean onoff){
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                button.setPressed(onoff);
+            }
+        }, 100);
+    }
 
-        MovieRoomDatabase db = MovieRoomDatabase.getDatabase(this);
-        MovieDAO mWordDao = db.movieDao();
+    public void saveFavourite(View v){
+        mDB = MovieRoomDatabase.getDatabase(this);
+        mWordDao = mDB.movieDao();
 
         try {
-
-
-            db.databaseWriteExecutor.execute(() -> {
-                if (mWordDao.searchExistingMovie(mCurrentMovie.getTitle()) == 0) {
-                    mWordDao.insert(mCurrentMovie); //TODO: make it more specific
+            mDB.databaseWriteExecutor.execute(() -> {
+                if (mWordDao.searchExistingMovie(String.valueOf(mCurrentMovie.getId())) != mCurrentMovie.getId()) {
+                    setButton(mFavouriteButton, true);
+                    mWordDao.insert(mCurrentMovie);
+                } else {
+                    setButton(mFavouriteButton, false);
+                    mWordDao.deleteMovie(String.valueOf(mCurrentMovie.getId()));
                 }
-
-                String count = mWordDao.getCount();
-                Log.wtf("CACHO", "count ->  " +  count);
-
             });
-
-
         } catch(Exception e){
 
         }
