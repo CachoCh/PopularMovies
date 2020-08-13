@@ -1,4 +1,4 @@
-package model;
+package com.cacho.popularmovies.model;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -23,7 +23,10 @@ public interface MovieDAO {
     void deleteMovie(String movieId);
 
     @Query("SELECT * from movie_table")
-    List<Movie> getFavouriteMovies();
+    LiveData<List<Movie>>getFavouriteMovies();
+
+    @Query("SELECT * from movie_table")
+    List<Movie>getFavouriteMoviesQ();
 
     @Query("SELECT COUNT(id) FROM movie_table")
     String getCount();

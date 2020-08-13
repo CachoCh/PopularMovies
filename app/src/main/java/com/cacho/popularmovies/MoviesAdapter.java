@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 
-import model.Movie;
+import com.cacho.popularmovies.model.Movie;
 
 import static com.cacho.popularmovies.MoviesGetter.POSTER_BASE_PATH;
 

@@ -7,7 +7,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Movie;
+import com.cacho.popularmovies.model.Movie;
 
 public final class JsonUtils {
     public static List<Movie> parseMoviesResult(String json) throws JSONException {

@@ -22,9 +22,9 @@ import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import model.Movie;
-import model.MovieDAO;
-import model.MovieRoomDatabase;
+import com.cacho.popularmovies.model.Movie;
+import com.cacho.popularmovies.model.MovieDAO;
+import com.cacho.popularmovies.model.MovieRoomDatabase;
 
 import static com.cacho.popularmovies.JsonUtils.parseMovieRuntime;
 import static com.cacho.popularmovies.JsonUtils.parseMovieTrailersKey;

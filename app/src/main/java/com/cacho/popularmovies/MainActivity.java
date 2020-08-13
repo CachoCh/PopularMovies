@@ -1,7 +1,10 @@
 package com.cacho.popularmovies;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,9 +24,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-import model.Movie;
-import model.MovieDAO;
-import model.MovieRoomDatabase;
+import com.cacho.popularmovies.livedata.MovieViewModel;
+import com.cacho.popularmovies.model.*;
 
 import static com.cacho.popularmovies.MainActivity.Sorting.FAVOURITES;
 import static com.cacho.popularmovies.MainActivity.Sorting.POPULAR;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private Spinner spinnerSorting;
     private GridView gridView;
     private Sorting sortingType = POPULAR;
+    private MovieViewModel mMovieViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +47,31 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinnerSorting = (Spinner) findViewById(R.id.spinnerSorting);
         spinnerSorting.setOnItemSelectedListener(this);
         gridView = (GridView) findViewById(R.id.gridview);
-        MovieRoomDatabase db = MovieRoomDatabase.getDatabase(this);
-        getMovies(db);
+
+        mMovieViewModel = new ViewModelProvider(this).get(MovieViewModel.class);
+        mMovieViewModel.getAllMovies().observe(this, new Observer<List<Movie>>() {
+            @Override
+            public void onChanged(@Nullable final List<Movie> movies) {
+                if (sortingType == FAVOURITES) {
+                    gridViewSetup(movies);
+                }
+            }
+        });
+
+        getMovies();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
         sortingType = position == 0 ? POPULAR : position == 1 ? TOP_RATED : FAVOURITES;
-        MovieRoomDatabase db = MovieRoomDatabase.getDatabase(this);
-        getMovies(db);
+        getMovies();
     }
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
-    private void getMovies(MovieRoomDatabase db) {
-        MovieDAO mMoviesDao = db.movieDao();
+    private void getMovies() {
 
         if (sortingType != FAVOURITES) {
             if (checkForInternet()) {
@@ -71,10 +82,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Toast.makeText(getApplicationContext(), "Sorry, there was a problem loading the movies", Toast.LENGTH_LONG).show();
             }
         } else {
-
-            Future<List<Movie>> result = db.databaseWriteExecutor.submit(new Callable<List<Movie>>() {
+            MovieDAO moviesDAO = MovieRoomDatabase.getDatabase(this).movieDao();
+            Future<List<Movie>> result = MovieRoomDatabase.getDatabase(this).databaseWriteExecutor.submit(new Callable<List<Movie>>() {
                 public List<Movie> call() throws Exception {
-                    return mMoviesDao.getFavouriteMovies();
+                    return moviesDAO.getFavouriteMoviesQ();
                 }
             });
 

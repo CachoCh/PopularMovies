@@ -1,4 +1,4 @@
-package model;
+package com.cacho.popularmovies.model;
 
 import android.content.Context;
 
