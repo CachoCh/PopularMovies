@@ -12,18 +12,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MoviesGetter extends AsyncTask<String , Void ,String> {
-    public static final String api_key = "513237b7c5664a3715519ed139954efb";
+    public static final String api_key = "";
     public final static String REQUEST_POPULAR_BASE = String.format("https://api.themoviedb.org/3/movie/popular?api_key=%s", api_key);
     public final static String REQUEST_TOP_RATED_BASE = String.format("https://api.themoviedb.org/3/movie/top_rated?api_key=%s", api_key);
     public final static String REQUEST_MOVIE_AND_TRAILERS = String.format("https://api.themoviedb.org/3/movie/%%s?api_key=%s&append_to_response=videos", api_key);
+    public final static String REQUEST_REVIEWS = String.format("https://api.themoviedb.org/3/movie/%%s/reviews?api_key=%s", api_key);
     //public final static String IMAGE_QUALITY = "w185";
     public final static String POSTER_BASE_PATH = "https://image.tmdb.org/t/p/w185";
 
     private OnTaskDoneListener onTaskDoneListener;
+    private String mRequestType;
     String server_response;
 
-    public MoviesGetter(OnTaskDoneListener onTaskDoneListener){
+
+    public MoviesGetter(OnTaskDoneListener onTaskDoneListener, String requestType){
         this.onTaskDoneListener = onTaskDoneListener;
+        mRequestType = requestType;
     }
 
     @Override
@@ -35,9 +39,9 @@ public class MoviesGetter extends AsyncTask<String , Void ,String> {
 
             int responseCode = urlConnection.getResponseCode();
 
-            if(responseCode == HttpURLConnection.HTTP_OK){
+            if(responseCode == HttpURLConnection.HTTP_OK) {
                 server_response = readStream(urlConnection.getInputStream());
-                Log.v("CatalogClient", server_response); }
+            }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -52,7 +56,7 @@ public class MoviesGetter extends AsyncTask<String , Void ,String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         if (onTaskDoneListener != null && s != null) {
-            onTaskDoneListener.onTaskDone(s);
+            onTaskDoneListener.onTaskDone(s, mRequestType);
         } else {
             onTaskDoneListener.onError();
         }

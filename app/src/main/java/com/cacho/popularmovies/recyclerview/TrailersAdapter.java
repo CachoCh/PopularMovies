@@ -32,7 +32,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
     public TrailersAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Create a new view.
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.text_row_item, parent, false);
+                .inflate(R.layout.trailers_row_item, parent, false);
 
         return new ViewHolder(v, mContext);
     }
@@ -70,7 +70,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.ViewHo
 
                 }
             });
-            textView = (TextView) v.findViewById(R.id.textView);
+            textView = (TextView) v.findViewById(R.id.reviews_tv);
         }
 
         public void setTrailerKey(String key){

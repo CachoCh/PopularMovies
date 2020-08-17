@@ -3,6 +3,7 @@ package com.cacho.popularmovies;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
+import com.cacho.popularmovies.recyclerview.ReviewsAdapter;
 import com.cacho.popularmovies.recyclerview.TrailersAdapter;
 import com.squareup.picasso.Picasso;
 
@@ -10,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,22 +22,25 @@ import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+
 import com.cacho.popularmovies.model.Movie;
 import com.cacho.popularmovies.model.MovieDAO;
 import com.cacho.popularmovies.model.MovieRoomDatabase;
 
 import static com.cacho.popularmovies.JsonUtils.parseMovieRuntime;
 import static com.cacho.popularmovies.JsonUtils.parseMovieTrailersKey;
+import static com.cacho.popularmovies.JsonUtils.parseReviews;
 import static com.cacho.popularmovies.MoviesGetter.POSTER_BASE_PATH;
 import static com.cacho.popularmovies.MoviesGetter.REQUEST_MOVIE_AND_TRAILERS;
+import static com.cacho.popularmovies.MoviesGetter.REQUEST_REVIEWS;
 
 public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListener{
 
-    final static String YOUTUBE_BASE_URL = "https://www.youtube.com/watch?v=";
-
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private RecyclerView mTrailersRecyclerView;
+    private RecyclerView.Adapter mTrailersAdapter;
+    private RecyclerView mReviewsRecyclerView;
+    private RecyclerView.Adapter mReviewsAdapter;
     Movie mCurrentMovie;
     private MovieRoomDatabase mDB;
     private MovieDAO mWordDao;
@@ -83,28 +86,26 @@ public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListen
                     } else {
                         setButton(mFavouriteButton, false);
                     }
-
-                    String count = mWordDao.getCount();
-                    Log.wtf("CACHO", "count ->  " +  count);
-
                 });
-
-
             } catch(Exception e){
 
             }
-            new MoviesGetter(this).execute(String.format(REQUEST_MOVIE_AND_TRAILERS, mCurrentMovie.getId()));
+            new MoviesGetter(this, MOVIE_REPLY).execute(String.format(REQUEST_MOVIE_AND_TRAILERS, mCurrentMovie.getId()));
+            new MoviesGetter(this, REVIEW_REPLY).execute(String.format(REQUEST_REVIEWS, mCurrentMovie.getId()));
+
+
         }
 
-        recyclerView = (RecyclerView) findViewById(R.id.trailers_rv);
+        mTrailersRecyclerView = (RecyclerView) findViewById(R.id.trailers_rv);
+        mReviewsRecyclerView = (RecyclerView) findViewById(R.id.reviews_rv);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        recyclerView.setHasFixedSize(true);
+        mTrailersRecyclerView.setHasFixedSize(true);
+        mTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // use a linear layout manager
-        layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        mReviewsRecyclerView.setHasFixedSize(true);
+        mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void setButton(Button button, boolean onoff){
@@ -137,20 +138,37 @@ public class MovieDetails extends AppCompatActivity implements  OnTaskDoneListen
     }
 
     @Override
-    public void onTaskDone(String responseData) {
+    public void onTaskDone(String responseData, String responseType) {
 
-        try {
-            String duration = parseMovieRuntime(responseData);
-            mCurrentMovie.setDuration(duration);
+        switch (responseType){
+            case MOVIE_REPLY:{
+                try {
+                    String duration = parseMovieRuntime(responseData);
+                    mCurrentMovie.setDuration(duration);
 
-            List<String> trailerKeyString = parseMovieTrailersKey(responseData);
-            mAdapter = new TrailersAdapter(this, trailerKeyString); //
-            recyclerView.setAdapter(mAdapter);
-        } catch (JSONException e) {
-            e.printStackTrace();
+                    List<String> trailerKeyString = parseMovieTrailersKey(responseData);
+                    mTrailersAdapter = new TrailersAdapter(this, trailerKeyString); //
+                    mTrailersRecyclerView.setAdapter(mTrailersAdapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                ((TextView) findViewById(R.id.duration_tv)).setText(String.format("%s min",mCurrentMovie.getDuration()));
+                break;
+            }
+            case REVIEW_REPLY:{ //parseReviews
+                try {
+                    List<String> trailerKeyString = parseReviews(responseData);
+                    mReviewsAdapter = new ReviewsAdapter(this, trailerKeyString);
+                    mReviewsRecyclerView.setAdapter(mReviewsAdapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
         }
 
-        ((TextView) findViewById(R.id.duration_tv)).setText(String.format("%s min",mCurrentMovie.getDuration()));
+
     }
 
     @Override

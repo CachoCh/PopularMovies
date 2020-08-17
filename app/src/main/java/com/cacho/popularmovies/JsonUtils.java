@@ -49,4 +49,14 @@ public final class JsonUtils {
         return trailerKeyString;
     }
 
+    public static List<String> parseReviews(String json) throws JSONException {
+        JSONArray ja =  new JSONObject(json).getJSONArray("results");
+        List<String> movieReviews = new ArrayList<>();
+
+        for (int i = 0; i < ja.length(); i++) {
+            JSONObject jo = ja.getJSONObject(i);
+            movieReviews.add(jo.getString("content"));
+        }
+        return movieReviews;
+    }
 }

@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (checkForInternet()) {
                 //String url = isPopular ? REQUEST_POPULAR_BASE : REQUEST_TOP_RATED_BASE;
                 String url = sortingType == POPULAR ? REQUEST_POPULAR_BASE : REQUEST_TOP_RATED_BASE;
-                new MoviesGetter(this).execute(url);
+                new MoviesGetter(this, MOVIE_REPLY).execute(url);
             } else {
                 Toast.makeText(getApplicationContext(), "Sorry, there was a problem loading the movies", Toast.LENGTH_LONG).show();
             }
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     @Override
-    public void onTaskDone(String responseData) {
+    public void onTaskDone(String responseData, String replyType) {
         List<Movie> moviesArray = null;
         try {
             moviesArray = JsonUtils.parseMoviesResult(responseData);
